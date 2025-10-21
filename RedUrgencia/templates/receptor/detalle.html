@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Paciente - Receptor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/detalle.css' %}" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">RedUrgencia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/receptor">Volver</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h1>Detalles del Paciente</h1>
+
+        {% if paciente.fecha and paciente.hora %}
+        <p class="info-header">Registrado el <strong>{{ paciente.fecha }}</strong> a las <strong>{{ paciente.hora }}</strong> Registrado por:</p>
+        {% endif %}
+
+        <div class="btn-group-custom">
+            <a href="/receptor" class="btn btn-secondary w-100">Volver</a>
+            <button class="btn btn-outline-primary w-100" onclick="window.print()">Imprimir</button>
+            <button class="btn btn-outline-danger w-100" onclick="alert('Descarga aún no implementada')">Descargar</button>
+        </div>
+
+        <div class="section-box">
+            <h4>Datos Personales</h4>
+            <div class="mb-3">
+                <label>Nombre y Apellido</label>
+                <input type="text" class="form-control" value="{{ paciente.nombre }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Edad</label>
+                <input type="text" class="form-control" value="{{ paciente.edad }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>RUT</label>
+                <input type="text" class="form-control" value="{{ paciente.rut }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Sexo</label>
+                <input type="text" class="form-control" value="{{ paciente.sexo }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Dirección</label>
+                <input type="text" class="form-control" value="{{ paciente.direccion }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Teléfono</label>
+                <input type="text" class="form-control" value="{{ paciente.telefono }}" readonly>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <h4>Estado Clínico</h4>
+            <div class="mb-3">
+                <label>Alergias</label>
+                <input type="text" class="form-control" value="{{ paciente.alergias }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Estado de Conciencia</label>
+                <input type="text" class="form-control" value="{{ paciente.estado_conciencia }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Estado de Pupilas</label>
+                <input type="text" class="form-control" value="{{ paciente.estado_pupilas }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Presión Arterial (mmHg)</label>
+                <input type="text" class="form-control" value="{{ paciente.presion_arterial }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Frecuencia Cardíaca (lpm)</label>
+                <input type="text" class="form-control" value="{{ paciente.frecuencia_cardiaca }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Frecuencia Respiratoria (rpm)</label>
+                <input type="text" class="form-control" value="{{ paciente.frecuencia_respiratoria }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Temperatura (°C)</label>
+                <input type="text" class="form-control" value="{{ paciente.temperatura }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Saturación de Oxígeno (%)</label>
+                <input type="text" class="form-control" value="{{ paciente.saturacion_oxigeno }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Nivel de Glucosa (mg/dL)</label>
+                <input type="text" class="form-control" value="{{ paciente.nivel_glucosa }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label>Síntomas</label>
+                <textarea class="form-control" rows="2" readonly>{{ paciente.sintomas }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label>Lesiones visibles</label>
+                <textarea class="form-control" rows="2" readonly>{{ paciente.lesiones }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label>Observaciones</label>
+                <textarea class="form-control" rows="2" readonly>{{ paciente.observaciones }}</textarea>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Listado de Pacientes - Emisor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{% static 'css/estilo_base.css' %}" rel="stylesheet" type="text/css" />
+    <style>
+        .form-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            background: white;
+            color: #3b3b98;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">RedUrgencia</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/menu_emisor">Volver</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Cerrar sesión</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="form-container">
+    <h1 class="mb-4">Registros de Pacientes</h1>
+
+    <form method="GET" class="mb-4 d-flex" role="search">
+        <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Buscar por nombre o RUT"
+            aria-label="Buscar"
+            name="q"
+            value="{{ query }}"
+        />
+        <button class="btn btn-outline-primary" type="submit">Buscar</button>
+    </form>
+
+    {% if pacientes %}
+    <div class="accordion" id="pacienteAccordion">
+        {% for paciente in pacientes %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse{{ forloop.counter }}"
+                    aria-expanded="false"
+                    aria-controls="collapse{{ forloop.counter }}"
+                >
+                    Paciente #{{ forloop.counter }} - {{ paciente.fecha }} - {{ paciente.hora }}
+                </button>
+            </h2>
+            <div
+                id="collapse{{ forloop.counter }}"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading{{ forloop.counter }}"
+                data-bs-parent="#pacienteAccordion"
+            >
+                <div class="accordion-body">
+                    <div class="nav nav-tabs" id="tabsPaciente{{ forloop.counter }}" role="tablist">
+                        <button
+                            class="nav-link active"
+                            id="datos-tab{{ forloop.counter }}"
+                            data-bs-toggle="tab"
+                            data-bs-target="#datos{{ forloop.counter }}"
+                            type="button"
+                            role="tab"
+                            aria-controls="datos{{ forloop.counter }}"
+                            aria-selected="true"
+                        >
+                            Datos Personales
+                        </button>
+                        <button
+                            class="nav-link"
+                            id="clinico-tab{{ forloop.counter }}"
+                            data-bs-toggle="tab"
+                            data-bs-target="#clinico{{ forloop.counter }}"
+                            type="button"
+                            role="tab"
+                            aria-controls="clinico{{ forloop.counter }}"
+                            aria-selected="false"
+                        >
+                            Estado Clínico
+                        </button>
+                    </div>
+                    <div class="tab-content" id="tabsContent{{ forloop.counter }}">
+                        <div
+                            class="tab-pane fade show active"
+                            id="datos{{ forloop.counter }}"
+                            role="tabpanel"
+                            aria-labelledby="datos-tab{{ forloop.counter }}"
+                        >
+                            <div class="mt-3">
+                                <p><strong>Nombre y Apellido:</strong> {{ paciente.nombre|default:"(Sin nombre)" }}</p>
+                                <p><strong>Edad:</strong> {{ paciente.edad|default:"(No Existe Edad)" }}</p>
+                                <p><strong>RUT:</strong> {{ paciente.rut|default:"(Sin RUT)" }}</p>
+                                <p><strong>Sexo:</strong> {{ paciente.sexo|default:"(No Existe Sexo)" }}</p>
+                                <p><strong>Dirección:</strong> {{ paciente.direccion|default:"(No Existe Direccion)" }}</p>
+                                <p><strong>Teléfono:</strong> {{ paciente.telefono|default:"(No Existe Telefono)" }}</p>
+                            </div>
+                        </div>
+                        <div
+                            class="tab-pane fade"
+                            id="clinico{{ forloop.counter }}"
+                            role="tabpanel"
+                            aria-labelledby="clinico-tab{{ forloop.counter }}"
+                        >
+                            <div class="mt-3">
+                                <p><strong>Alergias:</strong> {{ paciente.alergias|default:"(No Existen Alergias)" }}</p>
+                                <p><strong>Estado de Conciencia:</strong> {{ paciente.estado_conciencia|default:"(No Existe Estado de Conciencia)" }}</p>
+                                <p><strong>Estado de Pupilas:</strong> {{ paciente.estado_pupilas|default:"(No Existe Estado de Pupilas)" }}</p>
+                                <p><strong>Presión Arterial:</strong> {{ paciente.presion_arterial|default:"(No Existe Presión Arterial)" }}</p>
+                                <p><strong>Frecuencia Cardíaca:</strong> {{ paciente.frecuencia_cardiaca|default:"(No Existe Frecuencia Cardíaca)" }}</p>
+                                <p><strong>Frecuencia Respiratoria:</strong> {{ paciente.frecuencia_respiratoria|default:"(No Existe Frecuencia Respiratoria)" }}</p>
+                                <p><strong>Temperatura:</strong> {{ paciente.temperatura|default:"(No Existe Temperatura)" }}</p>
+                                <p><strong>Saturación de Oxígeno:</strong> {{ paciente.saturacion_oxigeno|default:"(No Existe Saturación)" }}</p>
+                                <p><strong>Nivel de Glucosa:</strong> {{ paciente.nivel_glucosa|default:"(No Existe Nivel de Glucosa)" }}</p>
+                                <p><strong>Síntomas:</strong><br />{{ paciente.sintomas|default:"(No Existen Sintomas)" }}</p>
+                                <p><strong>Lesiones visibles:</strong><br />{{ paciente.lesiones|default:"(No Existen Lesiones Visibles)" }}</p>
+                                <p><strong>Observaciones:</strong><br />{{ paciente.observaciones|default:"(No Existen Observaciones)" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="text-center mt-3">No hay pacientes registrados.</p>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

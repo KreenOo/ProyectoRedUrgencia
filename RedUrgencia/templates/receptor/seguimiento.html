@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento - Receptor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/estilo_base.css' %}" rel="stylesheet" type="text/css">
+    <style>
+        .form-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            background: white;
+            color: #3b3b98;
+            font-weight: bold;
+        }
+        .ambulancia-card {
+            background: #eef0ff;
+            border-left: 5px solid #3b3b98;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .estado-activa {
+            color: green;
+        }
+        .estado-inactiva {
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">RedUrgencia</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/menu_receptor">Volver</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Cerrar sesión</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="form-container">
+    <h1 class="mb-4">Seguimiento en Tiempo Real</h1>
+
+    <h4 class="mb-3">Ambulancias Activas</h4>
+    {% if ambulancias %}
+        {% for amb in ambulancias %}
+            <div class="ambulancia-card">
+                <p><strong>ID:</strong> {{ amb.id }}</p>
+                <p><strong>Conductor:</strong> {{ amb.conductor }}</p>
+                <p><strong>Patente:</strong> {{ amb.patente }}</p>
+                <p><strong>Ubicación:</strong> {{ amb.ubicacion }}</p>
+                <p>
+                    <strong>Estado:</strong>
+                    <span class="{% if amb.estado == 'Activa' %}estado-activa{% else %}estado-inactiva{% endif %}">
+                        {{ amb.estado }}
+                    </span>
+                </p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No hay ambulancias activas.</p>
+    {% endif %}
+
+    <h4 class="mt-5 mb-3">Pacientes Registrados Recientemente</h4>
+
+    {% if pacientes %}
+    <div class="accordion" id="pacienteAccordion">
+        {% for paciente in pacientes %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse{{ forloop.counter }}"
+                    aria-expanded="false"
+                    aria-controls="collapse{{ forloop.counter }}"
+                >
+                    Paciente #{{ forloop.counter }} - {{ paciente.nombre|default:"Sin nombre" }} ({{ paciente.fecha }} {{ paciente.hora }})
+                </button>
+            </h2>
+            <div
+                id="collapse{{ forloop.counter }}"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading{{ forloop.counter }}"
+                data-bs-parent="#pacienteAccordion"
+            >
+                <div class="accordion-body">
+                    <div class="nav nav-tabs" id="tabsPaciente{{ forloop.counter }}" role="tablist">
+                        <button
+                            class="nav-link active"
+                            id="datos-tab{{ forloop.counter }}"
+                            data-bs-toggle="tab"
+                            data-bs-target="#datos{{ forloop.counter }}"
+                            type="button"
+                            role="tab"
+                            aria-controls="datos{{ forloop.counter }}"
+                            aria-selected="true"
+                        >
+                            Datos Personales
+                        </button>
+                        <button
+                            class="nav-link"
+                            id="clinico-tab{{ forloop.counter }}"
+                            data-bs-toggle="tab"
+                            data-bs-target="#clinico{{ forloop.counter }}"
+                            type="button"
+                            role="tab"
+                            aria-controls="clinico{{ forloop.counter }}"
+                            aria-selected="false"
+                        >
+                            Estado Clínico
+                        </button>
+                    </div>
+                    <div class="tab-content" id="tabsContent{{ forloop.counter }}">
+                        <div
+                            class="tab-pane fade show active"
+                            id="datos{{ forloop.counter }}"
+                            role="tabpanel"
+                            aria-labelledby="datos-tab{{ forloop.counter }}"
+                        >
+                            <div class="mt-3">
+                                <p><strong>Nombre:</strong> {{ paciente.nombre }}</p>
+                                <p><strong>Edad:</strong> {{ paciente.edad }}</p>
+                                <p><strong>RUT:</strong> {{ paciente.rut }}</p>
+                                <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
+                                <p><strong>Dirección:</strong> {{ paciente.direccion }}</p>
+                                <p><strong>Teléfono:</strong> {{ paciente.telefono }}</p>
+                            </div>
+                        </div>
+                        <div
+                            class="tab-pane fade"
+                            id="clinico{{ forloop.counter }}"
+                            role="tabpanel"
+                            aria-labelledby="clinico-tab{{ forloop.counter }}"
+                        >
+                            <div class="mt-3">
+                                <p><strong>Alergias:</strong> {{ paciente.alergias }}</p>
+                                <p><strong>Estado de Conciencia:</strong> {{ paciente.estado_conciencia }}</p>
+                                <p><strong>Signos Vitales:</strong> {{ paciente.signos_vitales }}</p>
+                                <p><strong>Síntomas:</strong> {{ paciente.sintomas }}</p>
+                                <p><strong>Lesiones:</strong> {{ paciente.lesiones }}</p>
+                                <p><strong>Observaciones:</strong> {{ paciente.observaciones }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/detalle/{{ paciente.id }}" class="btn btn-primary flex-fill mt-3">Ver Detalles</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="text-center mt-3">No hay pacientes registrados.</p>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

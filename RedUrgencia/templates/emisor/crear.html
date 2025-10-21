@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emisor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{% static 'css/estilo_base.css' %}" rel="stylesheet" type="text/css" />
+    <style>
+        textarea {
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">RedUrgencia</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/menu_emisor">Volver</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Cerrar sesión</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="form-container">
+    <h1>Registrar Paciente</h1>
+
+    <form method="post" enctype="multipart/form-data" autocomplete="off" id="formCrearEmisor" novalidate>
+        {% csrf_token %}
+
+        <ul class="nav nav-tabs" id="emisorTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="datos-personales-tab" data-bs-toggle="tab" data-bs-target="#datos-personales" type="button" role="tab">Datos Personales</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="estado-clinico-tab" data-bs-toggle="tab" data-bs-target="#estado-clinico" type="button" role="tab">Estado Clínico</button>
+            </li>
+            <div class="ms-auto">
+                <li class="nav-item">
+                    <button class="nav-link" id="ver-modificar-tab" data-bs-toggle="tab" data-bs-target="#ver-modificar" type="button" role="tab" onclick="return false;">Ver/Modificar Registro</button>
+                </li>
+            </div>
+        </ul>
+
+        <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
+                <div class="mb-3">
+                    <label for="nombre">Nombre y Apellido</label>
+                    <input
+                        type="text"
+                        id="nombre"
+                        class="form-control"
+                        name="nombre"
+                        minlength="3"
+                        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+                        title="Solo letras y espacios"
+                        oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '')"
+                        value="{{ registro.nombre|default:'' }}"
+                    />
+                    <div class="invalid-feedback">
+                        Ingrese al menos 3 letras. No se permiten números ni caracteres especiales.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="edad">Edad</label>
+                    <input type="number" id="edad" class="form-control" name="edad" min="0" max="120" value="{{ registro.edad|default:'' }}">
+                    <div class="invalid-feedback">Edad debe estar entre 0 y 120.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="rut">RUT</label>
+                    <input type="text" id="rut" class="form-control" name="rut" pattern="^\d{7,9}$" placeholder="Solo números, sin puntos ni guiones" value="{{ registro.rut|default:'' }}">
+                    <div class="invalid-feedback">RUT inválido (7 a 9 dígitos).</div>
+                </div>
+                <div class="mb-3">
+                    <label for="sexo">Sexo</label>
+                    <select id="sexo" class="form-control" name="sexo">
+                        <option value="" {% if not registro.sexo %}selected{% endif %}>Seleccione</option>
+                        <option value="Masculino" {% if registro.sexo == 'Masculino' %}selected{% endif %}>Masculino</option>
+                        <option value="Femenino" {% if registro.sexo == 'Femenino' %}selected{% endif %}>Femenino</option>
+                        <option value="Otro" {% if registro.sexo == 'Otro' %}selected{% endif %}>Otro</option>
+                    </select>
+                    <div class="invalid-feedback">Seleccione una opción válida.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" id="direccion" class="form-control" name="direccion" value="{{ registro.direccion|default:'' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" id="telefono" class="form-control" name="telefono" pattern="^\d{8,}$" value="{{ registro.telefono|default:'' }}">
+                    <div class="invalid-feedback">Teléfono inválido (mínimo 8 dígitos, solo números).</div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="estado-clinico" role="tabpanel">
+
+                <div class="border rounded p-3 mb-4 bg-light">
+                    <h5 class="text-primary mb-3 fw-semibold">
+                    <i class="bi bi-person-vcard"></i> Evaluación Física General
+                    </h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="estado_conciencia" class="form-label">Estado de Conciencia</label>
+                            <select id="estado_conciencia" class="form-select" name="estado_conciencia">
+                                <option value="" {% if not registro.estado_conciencia %}selected{% endif %}>Seleccione</option>
+                                <option value="Consciente" {% if registro.estado_conciencia == 'Consciente' %}selected{% endif %}>Consciente</option>
+                                <option value="Confuso" {% if registro.estado_conciencia == 'Confuso' %}selected{% endif %}>Confuso</option>
+                                <option value="Inconsciente" {% if registro.estado_conciencia == 'Inconsciente' %}selected{% endif %}>Inconsciente</option>
+                                <option value="No sabe" {% if registro.estado_conciencia == 'No sabe' %}selected{% endif %}>No sabe</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="estado_pupilas" class="form-label">Estado de Pupilas</label>
+                            <select id="estado_pupilas" class="form-select" name="estado_pupilas">
+                                <option value="" {% if not registro.estado_pupilas %}selected{% endif %}>Seleccione</option>
+                                <option value="Normales"{% if registro.estado_pupilas == 'Normales' %}selected{% endif %}>Normales</option>
+                                <option value="Midriáticas (dilatadas)" {% if registro.estado_pupilas == 'Midriáticas (dilatadas)' %}selected{% endif %}>Midriáticas</option>
+                                <option value="Mióticas (contraídas)" {% if registro.estado_pupilas == 'Mióticas (contraídas)' %}selected{% endif %}>Mióticas</option>
+                                <option value="Reactivas a la luz" {% if registro.estado_pupilas == 'Reactivas a la luz' %}selected{% endif %}>Reactivas</option>
+                                <option value="No reactivas" {% if registro.estado_pupilas == 'No reactivas' %}selected{% endif %}>No reactivas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="form-label">Alergias</label>
+                            <div class="form-check">
+                            <input class="form-check-input" type="radio" name="alergias_radio" id="alergias-ninguna" value="Ninguna" 
+                                onchange="toggleAlergiaInput()" 
+                                {% if registro.alergias == 'Ninguna' or not registro.alergias %}checked{% endif %} >
+                            <label class="form-check-label" for="alergias-ninguna">Ninguna</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="alergias_radio" id="alergias-otra" value="Otra" 
+                                onchange="toggleAlergiaInput()" 
+                                {% if registro.alergias and registro.alergias != 'Ninguna' %}checked{% endif %} >
+                            <label class="form-check-label" for="alergias-otra">Otra</label>
+                        </div>
+                        <input type="text" class="form-control mt-2" id="alergias" name="alergias" placeholder="Especificar" 
+                            {% if registro.alergias and registro.alergias != 'Ninguna' %}
+                                value="{{ registro.alergias }}"
+                            {% else %}
+                                value="Ninguna"
+                                disabled
+                            {% endif %}
+                        >
+                        <div class="invalid-feedback" id="alergiasFeedback">Por favor, especifique la alergia.</div>    
+                    </div>
+                </div>
+
+                <div class="border rounded p-3 mb-4 bg-light">
+                    <h5 class="text-primary mb-3 fw-semibold">
+                    <i class="bi bi-heart-pulse"></i> Signos Vitales
+                    </h5>
+
+                    <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="presion_arterial" class="form-label">Presión Arterial (mmHg)</label>
+                        <input type="text" id="presion_arterial" class="form-control" name="presion_arterial" placeholder="Ej: 120/80">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="frecuencia_cardiaca" class="form-label">Frecuencia Cardíaca (lpm)</label>
+                        <input type="number" id="frecuencia_cardiaca" class="form-control" name="frecuencia_cardiaca" min="20" max="200" placeholder="Ej: 75">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="frecuencia_respiratoria" class="form-label">Frecuencia Respiratoria (rpm)</label>
+                        <input type="number" id="frecuencia_respiratoria" class="form-control" name="frecuencia_respiratoria" placeholder="Ej: 18">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="temperatura" class="form-label">Temperatura (°C)</label>
+                        <input type="number" id="temperatura" class="form-control" name="temperatura" step="0.1" placeholder="Ej: 36.8">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="saturacion_oxigeno" class="form-label">Saturación de Oxígeno (%)</label>
+                        <input type="number" id="saturacion_oxigeno" class="form-control" name="saturacion_oxigeno" placeholder="Ej: 97">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="nivel_glucosa" class="form-label">Nivel de Glucosa (mg/dL)</label>
+                        <input type="number" id="nivel_glucosa" class="form-control" name="nivel_glucosa" placeholder="Ej: 95">
+                    </div>
+                    </div>
+                </div>
+
+                <div class="border rounded p-3 mb-4 bg-light">
+                    <h5 class="text-primary mb-3 fw-semibold">
+                    <i class="bi bi-journal-medical"></i> Síntomas y Lesiones
+                    </h5>
+
+                    <div class="mb-3">
+                        <label for="sintomas" class="form-label">Síntomas</label>
+                        <textarea id="sintomas" class="form-control" rows="2" name="sintomas">{{ registro.sintomas|default:'' }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="lesiones" class="form-label">Lesiones</label>
+                        <textarea id="lesiones" class="form-control" rows="2" name="lesiones">{{ registro.lesiones|default:'' }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea id="observaciones" class="form-control" rows="2" name="observaciones">{{ registro.observaciones|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="archivo_clinico">Adjuntar archivo clínico (PDF, JPG, PNG)</label>
+                    <input type="file" class="form-control" id="archivo_clinico" name="archivo_clinico" accept=".pdf,.jpg,.jpeg,.png">
+                    <div class="form-text">Opcional. Tamaño máximo recomendado: 5MB.</div>
+                    {% if registro.archivo_clinico_url %}
+                        <div class="mt-2">
+                            <strong>Archivo actual:</strong> 
+                            <a href="{{ registro.archivo_clinico_url }}" target="_blank">Ver archivo</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="ver-modificar" role="tabpanel">
+    <h5>Registro Reciente</h5>
+    {% if paciente or registro %}
+    <div class="card mt-3">
+        <div class="card-header">
+            Último Registro Paciente
+        </div>
+        <div class="card-body">
+            <p><strong>Nombre:</strong> {{ paciente.nombre }}</p>
+            <p><strong>Edad:</strong> {{ paciente.edad }}</p>
+            <p><strong>RUT:</strong> {{ paciente.rut }}</p>
+            <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
+            <p><strong>Dirección:</strong> {{ paciente.direccion }}</p>
+            <p><strong>Teléfono:</strong> {{ paciente.telefono }}</p>
+            <p><strong>Alergias:</strong> {{ paciente.alergias }}</p>
+            <p><strong>Estado de Conciencia:</strong> {{ paciente.estado_conciencia }}</p>
+            <p><strong>Estado de Pupilas:</strong> {{ paciente.estado_pupilas }}</p>
+            
+            <p><strong>Presión Arterial:</strong> {{ paciente.presion_arterial }}</p>
+            <p><strong>Frecuencia Cardíaca:</strong> {{ paciente.frecuencia_cardiaca }}</p>
+            <p><strong>Frecuencia Respiratoria:</strong> {{ paciente.frecuencia_respiratoria }}</p>
+            <p><strong>Temperatura:</strong> {{ paciente.temperatura }}</p>
+            <p><strong>Saturación de Oxígeno:</strong> {{ paciente.saturacion_oxigeno }}</p>
+            <p><strong>Nivel de Glucosa:</strong> {{ paciente.nivel_glucosa }}</p>
+
+            <p><strong>Síntomas:</strong> {{ paciente.sintomas }}</p>
+            <p><strong>Lesiones:</strong> {{ paciente.lesiones }}</p>
+            <p><strong>Observaciones:</strong> {{ paciente.observaciones }}</p>
+
+            <a href="{% url 'editar_emisor' paciente.id %}" class="btn btn-primary mt-3">
+                Modificar
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <p>No hay registro reciente.</p>
+    {% endif %}
+</div>
+
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 mt-3">Enviar al Hospital</button>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function toggleAlergiaInput() {
+        var input = document.getElementById("alergias");
+        var otra = document.getElementById("alergias-otra").checked;
+
+        if (otra) {
+            input.disabled = false;
+            if(input.value === "Ninguna") input.value = "";
+            input.required = false;
+        } else {
+            input.disabled = true;
+            input.value = "Ninguna";
+            input.required = false;
+            input.classList.remove("is-invalid");
+        }
+    }
+
+    document.getElementById("formCrearEmisor").addEventListener("submit", function (e) {
+        const form = e.target;
+        let isValid = true;
+
+        const nombreInput = document.getElementById("nombre");
+        const nombreValor = nombreInput.value.trim();
+        const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+
+        if (nombreValor !== "") {
+            if (nombreValor.length < 3 || !soloLetrasRegex.test(nombreValor)) {
+                nombreInput.classList.add("is-invalid");
+                nombreInput.classList.remove("is-valid");
+                isValid = false;
+            } else {
+                nombreInput.classList.remove("is-invalid");
+                nombreInput.classList.add("is-valid");
+            }
+        } else {
+            nombreInput.classList.remove("is-invalid");
+            nombreInput.classList.remove("is-valid");
+        }
+
+        const alergiasOtra = document.getElementById("alergias-otra").checked;
+        const alergiasInput = document.getElementById("alergias");
+        if (alergiasOtra && alergiasInput.value.trim() === "") {
+            alergiasInput.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            alergiasInput.classList.remove("is-invalid");
+        }
+
+        const edadInput = document.getElementById("edad");
+        const edadValor = edadInput.value.trim();
+        if (edadValor !== "") {
+            const edadNum = Number(edadValor);
+            if (isNaN(edadNum) || edadNum < 0 || edadNum > 120) {
+                edadInput.classList.add("is-invalid");
+                isValid = false;
+            } else {
+                edadInput.classList.remove("is-invalid");
+                edadInput.classList.add("is-valid");
+            }
+        } else {
+            edadInput.classList.remove("is-invalid");
+            edadInput.classList.remove("is-valid");
+        }
+
+        const rutInput = document.getElementById("rut");
+        const rutValor = rutInput.value.trim();
+        const rutRegex = /^\d{7,9}$/;
+        if (rutValor !== "" && !rutRegex.test(rutValor)) {
+            rutInput.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            rutInput.classList.remove("is-invalid");
+            if(rutValor !== "") rutInput.classList.add("is-valid");
+            else rutInput.classList.remove("is-valid");
+        }
+
+        const telefonoInput = document.getElementById("telefono");
+        const telefonoValor = telefonoInput.value.trim();
+        const telefonoRegex = /^\d{8,}$/;
+        if (telefonoValor !== "" && !telefonoRegex.test(telefonoValor)) {
+            telefonoInput.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            telefonoInput.classList.remove("is-invalid");
+            if(telefonoValor !== "") telefonoInput.classList.add("is-valid");
+            else telefonoInput.classList.remove("is-valid");
+        }
+
+        const estadoConcienciaSelect = document.getElementById("estado_conciencia");
+        if (estadoConcienciaSelect.value !== "") {
+            const opcionesValidas = ["Consciente", "Confuso", "Inconsciente", "No sabe"];
+            if (!opcionesValidas.includes(estadoConcienciaSelect.value)) {
+                estadoConcienciaSelect.classList.add("is-invalid");
+                isValid = false;
+            } else {
+                estadoConcienciaSelect.classList.remove("is-invalid");
+                estadoConcienciaSelect.classList.add("is-valid");
+            }
+        } else {
+            estadoConcienciaSelect.classList.remove("is-invalid");
+            estadoConcienciaSelect.classList.remove("is-valid");
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+            form.classList.add("was-validated");
+        }
+    });
+
+    window.onload = toggleAlergiaInput;
+</script>
+
+</body>
+</html>

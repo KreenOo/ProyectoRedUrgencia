@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editar Paciente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{% static 'css/estilo_base.css' %}" rel="stylesheet" type="text/css" />
+    <style>
+        textarea {
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">RedUrgencia</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/emisor">Volver</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Cerrar sesión</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="form-container">
+    <h1>Editar Paciente</h1>
+
+    <form method="post" enctype="multipart/form-data" autocomplete="off" id="formEditarEmisor" novalidate class="needs-validation" action="{% url 'editar_emisor' paciente.id %}">
+        {% csrf_token %}
+
+        <ul class="nav nav-tabs" id="emisorTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="datos-personales-tab" data-bs-toggle="tab" data-bs-target="#datos-personales" type="button" role="tab">Datos Personales</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="estado-clinico-tab" data-bs-toggle="tab" data-bs-target="#estado-clinico" type="button" role="tab">Estado Clínico</button>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
+                <div class="mb-3">
+                    <label for="nombre">Nombre y Apellido</label>
+                    <input type="text" id="nombre" class="form-control" name="nombre" minlength="3"
+                        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+                        value="{{ paciente.nombre }}"
+                        required />
+                    <div class="invalid-feedback">
+                        Ingrese al menos 3 letras. No se permiten números ni caracteres especiales.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="edad">Edad</label>
+                    <input type="number" id="edad" class="form-control" name="edad" min="0" max="120" value="{{ paciente.edad }}" required />
+                    <div class="invalid-feedback">Edad debe estar entre 0 y 120.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="rut">RUT</label>
+                    <input type="text" id="rut" class="form-control" name="rut" pattern="^\d{7,9}$" placeholder="Solo números, sin puntos ni guiones" value="{{ paciente.rut }}" required />
+                    <div class="invalid-feedback">RUT inválido (7 a 9 dígitos).</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="sexo">Sexo</label>
+                    <select id="sexo" class="form-control" name="sexo" required>
+                        <option value="">Seleccione</option>
+                        <option value="Masculino" {% if paciente.sexo == 'Masculino' %}selected{% endif %}>Masculino</option>
+                        <option value="Femenino" {% if paciente.sexo == 'Femenino' %}selected{% endif %}>Femenino</option>
+                        <option value="Otro" {% if paciente.sexo == 'Otro' %}selected{% endif %}>Otro</option>
+                    </select>
+                    <div class="invalid-feedback">Seleccione una opción válida.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" id="direccion" class="form-control" name="direccion" value="{{ paciente.direccion }}" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" id="telefono" class="form-control" name="telefono" pattern="^\d{8,}$" value="{{ paciente.telefono }}" />
+                    <div class="invalid-feedback">Teléfono inválido (mínimo 8 dígitos, solo números).</div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="estado-clinico" role="tabpanel">
+
+                <div class="border rounded p-3 mb-4 bg-light">
+                    <h5 class="text-primary mb-3 fw-semibold">Evaluación Física General</h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="estado_conciencia" class="form-label">Estado de Conciencia</label>
+                            <select id="estado_conciencia" class="form-select" name="estado_conciencia">
+                                <option value="">Seleccione</option>
+                                <option value="Consciente" {% if paciente.estado_conciencia == 'Consciente' %}selected{% endif %}>Consciente</option>
+                                <option value="Confuso" {% if paciente.estado_conciencia == 'Confuso' %}selected{% endif %}>Confuso</option>
+                                <option value="Inconsciente" {% if paciente.estado_conciencia == 'Inconsciente' %}selected{% endif %}>Inconsciente</option>
+                                <option value="No sabe" {% if paciente.estado_conciencia == 'No sabe' %}selected{% endif %}>No sabe</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="estado_pupilas" class="form-label">Estado de Pupilas</label>
+                            <select id="estado_pupilas" class="form-select" name="estado_pupilas">
+                                <option value="">Seleccione</option>
+                                <option value="Normales" {% if paciente.estado_pupilas == 'Normales' %}selected{% endif %}>Normales</option>
+                                <option value="Midriáticas" {% if paciente.estado_pupilas == 'Midriáticas' %}selected{% endif %}>Midriáticas (dilatadas)</option>
+                                <option value="Mióticas" {% if paciente.estado_pupilas == 'Mióticas' %}selected{% endif %}>Mióticas (contraídas)</option>
+                                <option value="Reactivas" {% if paciente.estado_pupilas == 'Reactivas' %}selected{% endif %}>Reactivas a la luz</option>
+                                <option value="No reactivas" {% if paciente.estado_pupilas == 'No reactivas' %}selected{% endif %}>No reactivas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="form-label">Alergias</label>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="alergias_radio" id="alergias-ninguna" value="Ninguna" {% if paciente.alergias == 'Ninguna' %}checked{% endif %} onchange="toggleAlergiaInput()">
+                                <label class="form-check-label" for="alergias-ninguna">Ninguna</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="alergias_radio" id="alergias-otra" value="Otra" {% if paciente.alergias != 'Ninguna' %}checked{% endif %} onchange="toggleAlergiaInput()">
+                                <label class="form-check-label" for="alergias-otra">Otra</label>
+                            </div>
+                        </div>
+                        <input type="text" class="form-control mt-2" id="alergias" name="alergias" placeholder="Especificar" value="{{ paciente.alergias }}" {% if paciente.alergias == 'Ninguna' %}disabled{% endif %}>
+                    </div>
+                </div>
+
+                <div class="border rounded p-3 mb-4 bg-light">
+                    <h5 class="text-primary mb-3 fw-semibold">Signos Vitales</h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="presion_arterial" class="form-label">Presión Arterial (mmHg)</label>
+                            <input type="text" id="presion_arterial" class="form-control" name="presion_arterial" value="{{ paciente.presion_arterial }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="frecuencia_cardiaca" class="form-label">Frecuencia Cardíaca (lpm)</label>
+                            <input type="number" id="frecuencia_cardiaca" class="form-control" name="frecuencia_cardiaca" value="{{ paciente.frecuencia_cardiaca }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="frecuencia_respiratoria" class="form-label">Frecuencia Respiratoria (rpm)</label>
+                            <input type="number" id="frecuencia_respiratoria" class="form-control" name="frecuencia_respiratoria" value="{{ paciente.frecuencia_respiratoria }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temperatura" class="form-label">Temperatura (°C)</label>
+                            <input type="number" id="temperatura" class="form-control" name="temperatura" step="0.1" value="{{ paciente.temperatura }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="saturacion_oxigeno" class="form-label">Saturación de Oxígeno (%)</label>
+                            <input type="number" id="saturacion_oxigeno" class="form-control" name="saturacion_oxigeno" value="{{ paciente.saturacion_oxigeno }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nivel_glucosa" class="form-label">Nivel de Glucosa (mg/dL)</label>
+                            <input type="number" id="nivel_glucosa" class="form-control" name="nivel_glucosa" value="{{ paciente.nivel_glucosa }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border rounded p-3 mb-4 bg-light">
+                    <h5 class="text-primary mb-3 fw-semibold">Síntomas y Lesiones</h5>
+                    <div class="mb-3">
+                        <label for="sintomas" class="form-label">Síntomas</label>
+                        <textarea id="sintomas" class="form-control" rows="2" name="sintomas">{{ paciente.sintomas }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lesiones" class="form-label">Lesiones</label>
+                        <textarea id="lesiones" class="form-control" rows="2" name="lesiones">{{ paciente.lesiones }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea id="observaciones" class="form-control" rows="2" name="observaciones">{{ paciente.observaciones }}</textarea>
+                    </div>
+                </div>
+
+                <div class="border rounded p-3 bg-light">
+                    <h5 class="text-primary mb-3 fw-semibold">Adjuntar Archivo Clínico</h5>
+                    <input type="file" class="form-control" id="archivo_clinico" name="archivo_clinico" accept=".pdf,.jpg,.jpeg,.png">
+                    {% if paciente.archivo_clinico %}
+                        <small>Actual: <a href="{{ paciente.archivo_clinico.url }}" target="_blank">Ver archivo</a></small>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 mt-3">Guardar Cambios</button>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleAlergiaInput() {
+        var input = document.getElementById("alergias");
+        var otra = document.getElementById("alergias-otra").checked;
+        input.disabled = !otra;
+        if (!otra) input.value = "Ninguna";
+    }
+    window.onload = toggleAlergiaInput;
+</script>
+
+</body>
+</html>
